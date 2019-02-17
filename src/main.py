@@ -13,11 +13,9 @@ def main(arguments):
         print("Capturing image for recognition")
         capture("./face_testing/unknown_pictures/","Face Recognition")        # capture image for recognition
         faceRecognition()                            # Recognize face
-
     elif mode == "input":
         print("Training the system")
         capture("./face_testing/pictures_of_people_i_know/","System Training")    # capture image for training
-
     elif mode == "recognition":                            # for testing pupose only
         print("Mode = Face Recognition")
         faceRecognition()                            # Recognize face
