@@ -1,3 +1,14 @@
+## 21 Feb 2019
+1. bug fix: found on 21 Feb 2019
+    - description: the home door would open for unauthorized people if an authorized person had come before him
+    - solution: once the image is used for recognition, it will be deleted. Hence the same image can not be reused in future.
+2. bug fix: found on 19 Feb 2019
+    - description: if "face_recognition_module.py" was not able to find a face in the image taken, then it was throwing an IndexOutOfBound error
+    - solution: if face is not found, then it is not used for comparison
+3. change: when name of the person was being extracted from the image name by removing 7 characters from the end of the image name.
+    - now, the name is extracted dynamically by using "\_" as a separator
+
+
 ## 17 Feb 2019
 1. change: indentation has been standardized to spaces instead of tabs
 2. change: "main.py" is split into "main_door.py" and "main_add_new_face.py"
