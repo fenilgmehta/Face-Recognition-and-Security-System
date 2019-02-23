@@ -8,9 +8,10 @@ import datetime
 
 
 def faceRecognition():
-    base_path = "./face_testing"
-    folder_known_faces = '/pictures_of_people_i_know'
-    folder_unknown_faces = '/unknown_pictures'
+    messageToClient = "\n\nUnauthorized person"
+    base_path = "."
+    folder_known_faces = '/trained_faces'
+    folder_unknown_faces = '/unknown_faces'
 
 
     known_people_names_map = os.listdir(base_path+folder_known_faces)
@@ -20,7 +21,7 @@ def faceRecognition():
     known_people_images_encoded = []
 
 
-    unknown_people_images = os.listdir(base_path+folder_unknown_faces)
+    unknown_people_images = os.listdir(base_path+folder_unknown_faces+"/")
     unknown_people_images.sort()
     unknown_people_images_encoded = []
 
@@ -53,7 +54,8 @@ def faceRecognition():
         unknown_picture = face_recognition.load_image_file(base_path+folder_unknown_faces+"/"+str(i))
         unknown_face_encoding = face_recognition.face_encodings(unknown_picture)
         if len(unknown_face_encoding) == 0:
-            print('Unable to find face. Please take a picture in a well lit location.')     
+            print('Unable to find face. Please take a picture in a well lit location.')
+            messageToClient = 'Unable to find face. Please take a picture in a well lit location.'
             images_to_delete.append(True)               
             os.remove(base_path+folder_unknown_faces+"/"+str(i));
             unknown_people_images_encoded.append(None)
@@ -71,8 +73,13 @@ def faceRecognition():
         for j in range(len(results)):
             if results[j] == True:
                 #print("'" + str(unknown_people_images[i]) + "' is a known face : " + str(known_people_names_map[j]))
-                print("\n\nHello " + str(known_people_names_map[j])+"!")
+                #print("\n\nHello " + str(known_people_names_map[j])+"!")
+                messageToClient = "\n\nHello " + str(known_people_names_map[j])+"!"
                 a_known_face = True
                 break
-        if not a_known_face: print("Unauthorized person.")
+        if not a_known_face: 
+            #print("Unauthorized person.")
+            messageToClient = "Unauthorized person."
         os.remove(base_path+folder_unknown_faces+"/"+unknown_people_images[i]);
+
+    return messageToClient
