@@ -1,3 +1,7 @@
+## 23 Feb 2019
+1. change: README.md file slightly updated
+2. new: camera module for Raspberry Pi added
+
 ## 21 Feb 2019
 1. bug fix: found on 21 Feb 2019
     - description: the home door would open for unauthorized people if an authorized person had come before him
