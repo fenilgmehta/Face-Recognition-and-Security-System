@@ -1,6 +1,9 @@
 ## 23 Feb 2019
 1. change: README.md file slightly updated
 2. new: camera module for Raspberry Pi added
+3. new: module to send images over the LAN using UDP protocol
+4. change: "face_recognition_module.py" updated to print and return the face comparison results
+5. new: text to speech module to get audio results
 
 ## 21 Feb 2019
 1. bug fix: found on 21 Feb 2019
@@ -11,7 +14,6 @@
     - solution: if face is not found, then it is not used for comparison
 3. change: when name of the person was being extracted from the image name by removing 7 characters from the end of the image name.
     - now, the name is extracted dynamically by using "\_" as a separator
-
 
 ## 17 Feb 2019
 1. change: indentation has been standardized to spaces instead of tabs
