@@ -1,3 +1,9 @@
+## 24 Feb 2019
+1. new: server module to reply client requests from LAN using UDP protocol
+    - tested on Laptop
+2. new: client modules for face training and recognition
+    - tested on Raspberry Pi 3
+
 ## 23 Feb 2019
 1. change: README.md file slightly updated
 2. new: camera module for Raspberry Pi added
