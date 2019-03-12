@@ -130,8 +130,8 @@ class FaceRecognizer:
             return return_value
 
 
-    def simple_face_detection(self, picture_path, success_percentage = 0.6, distance_tolerance = 0.6):
-        return self.face_detection(picture_path, success_percentage, distance_tolerance)[1]
+    def single_face_detection(self, picture_path, success_percentage = 0.6, distance_tolerance = 0.6):
+        return self.face_detection(picture_path, False, success_percentage, distance_tolerance)
 
 
 if __name__ == "__main__":
@@ -141,6 +141,7 @@ if __name__ == "__main__":
     path_to_new_pics = os.path.abspath('./z_face_testing/unknown_pictures/')
     for i in os.listdir(path_to_new_pics):
         print("face recognition:", i, a.face_detection(path_to_new_pics + '/' + str(i), True, 0.0, 0.4))
+        print("face recognition:", i, a.single_face_detection(path_to_new_pics + '/' + str(i), 0.0, 0.4))
         # print("face recognition:", i, a.face_detection(path_to_new_pics + '/' + str(i), False, 0.5, 0.4))
 
     # print(a.face_detection('./z_face_testing/unknown_pictures/unknown.jpg', True, 0.6, 0.5))
