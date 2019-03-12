@@ -48,15 +48,16 @@ class FaceRecognizer:
         known_faces = []
         self.known_faces_encoded = []
         for i in os.listdir(folder_path):
-            res = self.train_on_folder(folder_path + "/" + i, delete_image_without_faces)
+            res = self.__train_on_folder(folder_path + "/" + i, delete_image_without_faces)
             if len(res[1]) == 0: continue
             self.known_faces_encoded.append(res)
 
 
-    def train_on_folder(self, folder_path, delete_image_without_faces = False):
+    def __train_on_folder(self, folder_path, delete_image_without_faces = False):
         '''
         This function will return a tuple of (person name, list of encoded faces)
         If the "folder_path" does not exists, then we return no name and empty list
+        person_name: it will be same as the name of the folder being scanned for images
         '''
         folder_path = os.path.abspath(folder_path)
         folder_path_exists = os.path.isdir(folder_path)
