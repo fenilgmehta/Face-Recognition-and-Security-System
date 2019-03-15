@@ -1,6 +1,9 @@
+print("=== import started ===")
 import face_recognition
 import os
 import numpy
+import pickle
+print("=== import complete ===")
 
 def mydebug(msg):
     print("DEBUG: "+str(msg))
@@ -41,6 +44,7 @@ class FaceRecognizer:
         Due to this, we can compare unknown face with multiple pictures of the same person.
         Example: face with beard, without beard, with makeup, without makeup, with hair cut, without hair cut, and many more cases
         '''
+
         folder_path = self.path_to_training_data
         folder_path = os.path.abspath(folder_path)
         if not os.path.exists(folder_path): return
@@ -134,14 +138,43 @@ class FaceRecognizer:
         return self.face_detection(picture_path, False, success_percentage, distance_tolerance)
 
 
+    def save_to_file(self, file_name = "trained_faces.pkl"):
+        # open the file for writing
+        file_object = open(file_name,'wb') 
+        # this writes the object to the file named stored in the variable file_name
+        pickle.dump((self.is_valid, self.path_to_training_data, self.known_faces_encoded), file_object)
+        # here we close the file object
+        file_object.close()
+
+
+    def load_from_file(self, saved_file_name = "trained_faces.pkl"):
+        # Check if file exists and it contains data or not. If file not found or file is empty, then return False. Else read the content and load the object
+        if os.path.isfile("./" + saved_file_name) and os.path.getsize(saved_file_name) != 0:
+            # open the file in read mode
+            file_object = open(saved_file_name, 'rb')  
+            # load the object from the file into class data members
+            (self.is_valid, self.path_to_training_data, self.known_faces_encoded) = pickle.load(file_object)  
+            return True
+        return False
+
+
 if __name__ == "__main__":
     # from face_recognition_module_new import *
     a = FaceRecognizer('./z_face_testing/pictures_of_people_i_know')
-    a.train_on_folder_tree()
+
+    print("\n=== Training started ===")
+    if not a.load_from_file():
+        a.train_on_folder_tree()
+        a.save_to_file()
+    print("=== Training complete ===")
+    # a.save_to_file()
+
+    print("\n=== Face detection started ===")
     path_to_new_pics = os.path.abspath('./z_face_testing/unknown_pictures/')
     for i in os.listdir(path_to_new_pics):
         print("face recognition:", i, a.face_detection(path_to_new_pics + '/' + str(i), True, 0.0, 0.4))
         print("face recognition:", i, a.single_face_detection(path_to_new_pics + '/' + str(i), 0.0, 0.4))
         # print("face recognition:", i, a.face_detection(path_to_new_pics + '/' + str(i), False, 0.5, 0.4))
+    print("=== Face detection complete ===")
 
     # print(a.face_detection('./z_face_testing/unknown_pictures/unknown.jpg', True, 0.6, 0.5))
