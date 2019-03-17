@@ -8,32 +8,32 @@ def mydebug(msg, debug_prefix = "DEBUG"):
 
 
 class Camera:
-    def capture_single_image(path = "./", image_name_prefix = "image_", display_message = "Face Recognition and Security System"):
+    def capture_single_image(image_path = "./", image_name_prefix = "image_", display_message = "Face Recognition and Security System"):
         """
             Used to capture a single photo from Laptop camera
 
             Parameters:
-            path (str): path to store the captured image
+            image_path (str): path to store the captured image
             image_name_prefix (str): prefix for the new image name
             display_message (str): title for the camera window, i.e. this message will be displayed when the camera window is open
         """
-        Camera.capture_multiple_image(path, image_name_prefix, display_message, 1)
+        Camera.capture_multiple_image(image_path, image_name_prefix, display_message, 1)
 
-    def capture_multiple_image(path = "./", image_name_prefix = "image_", display_message = "Face Recognition and Security System", image_count = 0):
+    def capture_multiple_image(image_path = "./", image_name_prefix = "image_", display_message = "Face Recognition and Security System", image_count = 0):
         """
             Used to capture multiple photos from Laptop camera
             Press "ENTER" to take a new photo
             Press "ESC" to stop capturing
 
             Parameters:
-            path (str): path to store the captured image
+            image_path (str): path to store the captured image
             image_name_prefix (str): prefix for the new image name
             display_message (str): title for the camera window, i.e. this message will be displayed when the camera window is open
             image_count (int): maximum number of images to be captured. If this is less than equal to 0, then keep taking images untill "ESC" is pressed
         """
 
-        path = os.path.abspath(path)
-        if os.path.exists(path) == False: return
+        image_path = os.path.abspath(image_path)
+        if os.path.exists(image_path) == False: return
 
         # count files and folders in the directory
         image_name_suffix = len(os.listdir())
@@ -56,7 +56,7 @@ class Camera:
                 break
             elif k == 13:   # Enter pressed (for space-bar event '32')
                 # location to store the image
-                img_name = path+"/"+image_name_prefix+"{}.png".format(image_name_suffix)
+                img_name = image_path+"/"+image_name_prefix+"{}.png".format(image_name_suffix)
                 cv2.imwrite(img_name, frame)
                 mydebug("{} saved!".format(img_name))
                 image_name_suffix += 1
