@@ -1,9 +1,9 @@
-print("=== import started ===")
+print("=== import started (face_recognizer) ===")
 import face_recognition
 import os
 import numpy
 import pickle
-print("=== import complete ===")
+print("=== import complete (face_recognizer) ===")
 
 def mydebug(msg):
     print("DEBUG: "+str(msg))
