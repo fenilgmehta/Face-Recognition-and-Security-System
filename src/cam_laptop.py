@@ -10,12 +10,12 @@ def mydebug(msg, debug_prefix = "DEBUG"):
 class Camera:
     def capture_single_image(image_path = "./", image_name_prefix = "image_", display_message = "Face Recognition and Security System"):
         """
-            Used to capture a single photo from Laptop camera
+            Used to capture a single photo from Laptop camera.
 
             Parameters:
-            image_path (str): path to store the captured image
-            image_name_prefix (str): prefix for the new image name
-            display_message (str): title for the camera window, i.e. this message will be displayed when the camera window is open
+            image_path (str): Path to store the captured image
+            image_name_prefix (str): Prefix for the new image name
+            display_message (str): Title for the camera window, i.e. this message will be displayed when the camera window is open
 
             Returns:
             tuple: Path to all captured images
@@ -24,15 +24,15 @@ class Camera:
 
     def capture_multiple_image(image_path = "./", image_name_prefix = "image_", display_message = "Face Recognition and Security System", image_count = 0):
         """
-            Used to capture multiple photos from Laptop camera
+            Used to capture multiple photos from Laptop camera.
             Press "ENTER" to take a new photo
             Press "ESC" to stop capturing
 
             Parameters:
-            image_path (str): path to store the captured image
-            image_name_prefix (str): prefix for the new image name
-            display_message (str): title for the camera window, i.e. this message will be displayed when the camera window is open
-            image_count (int): maximum number of images to be captured. If this is less than equal to 0, then keep taking images untill "ESC" is pressed
+            image_path (str): Path to store the captured image
+            image_name_prefix (str): Prefix for the new image name
+            display_message (str): Title for the camera window, i.e. this message will be displayed when the camera window is open
+            image_count (int): Maximum number of images to be captured. If this is less than equal to 0, then keep taking images untill "ESC" is pressed
 
             Returns:
             tuple: Path to all captured images
