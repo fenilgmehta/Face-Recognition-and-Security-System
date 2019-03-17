@@ -16,8 +16,11 @@ class Camera:
             image_path (str): path to store the captured image
             image_name_prefix (str): prefix for the new image name
             display_message (str): title for the camera window, i.e. this message will be displayed when the camera window is open
+
+            Returns:
+            tuple: Path to all captured images
         """
-        Camera.capture_multiple_image(image_path, image_name_prefix, display_message, 1)
+        return Camera.capture_multiple_image(image_path, image_name_prefix, display_message, 1)
 
     def capture_multiple_image(image_path = "./", image_name_prefix = "image_", display_message = "Face Recognition and Security System", image_count = 0):
         """
@@ -30,6 +33,9 @@ class Camera:
             image_name_prefix (str): prefix for the new image name
             display_message (str): title for the camera window, i.e. this message will be displayed when the camera window is open
             image_count (int): maximum number of images to be captured. If this is less than equal to 0, then keep taking images untill "ESC" is pressed
+
+            Returns:
+            tuple: Path to all captured images
         """
 
         image_path = os.path.abspath(image_path)
@@ -37,6 +43,7 @@ class Camera:
 
         # count files and folders in the directory
         image_name_suffix = len(os.listdir(image_path)) + 1
+        complete_image_paths = []
 
         # select defualt camera i.e 0
         camera = cv2.VideoCapture(0)
@@ -58,12 +65,15 @@ class Camera:
                 # location to store the image
                 img_name = image_path+"/"+image_name_prefix+"{}.png".format(image_name_suffix)
                 cv2.imwrite(img_name, frame)
+                complete_image_paths.append(img_name)
                 mydebug("{} saved!".format(img_name))
                 image_name_suffix += 1
                 i += 1
 
         camera.release()
         cv2.destroyAllWindows()
+
+        return tuple(complete_image_paths)
 
 
 Camera.capture_single_image = staticmethod(Camera.capture_single_image)
@@ -72,6 +82,6 @@ Camera.capture_multiple_image = staticmethod(Camera.capture_multiple_image)
 
 if __name__ == "__main__":
     print("Single capture start")
-    Camera.capture_single_image()
+    print(Camera.capture_single_image())
     print("Multiple capture start")
-    Camera.capture_multiple_image()
+    print(Camera.capture_multiple_image())
