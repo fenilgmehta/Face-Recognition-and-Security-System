@@ -1,6 +1,6 @@
 # python 2
 from picamera import PiCamera
-from os
+import os
 from time import sleep
 
 class Camera:
@@ -36,6 +36,7 @@ class Camera:
         camera.stop_preview()
 
         return complete_image_paths
+
 
 Camera.capture_single_image = staticmethod(Camera.capture_single_image)
 
