@@ -17,7 +17,10 @@ class Camera:
             tuple: Path to all captured images
         """
         image_path = os.path.abspath(image_path)
-        if os.path.exists(image_path) == False: return
+        os.makedirs(image_path, exist_ok=True)
+        # if os.path.exists(image_path) == False:
+        #     print("ERROR: \"" + str(image_path) + "\" does not exists")
+        #     return
 
 
         # count files and folders in the directory
