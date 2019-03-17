@@ -42,7 +42,7 @@ class Camera:
         """
 
         image_path = os.path.abspath(image_path)
-        os.makedirs(path, exist_ok=True)
+        os.makedirs(image_path, exist_ok=True)
         # if os.path.exists(image_path) == False:
         #     print("ERROR: \"" + str(image_path) + "\" does not exists")
         #     return
