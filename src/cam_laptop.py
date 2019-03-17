@@ -36,7 +36,7 @@ class Camera:
         if os.path.exists(image_path) == False: return
 
         # count files and folders in the directory
-        image_name_suffix = len(os.listdir())
+        image_name_suffix = len(os.listdir(image_path)) + 1
 
         # select defualt camera i.e 0
         camera = cv2.VideoCapture(0)
