@@ -1,4 +1,7 @@
 # python 2/3
+# Description: python module to for Camera interface
+
+
 import cv2
 import os
 
@@ -39,7 +42,10 @@ class Camera:
         """
 
         image_path = os.path.abspath(image_path)
-        if os.path.exists(image_path) == False: return
+        os.makedirs(path, exist_ok=True)
+        # if os.path.exists(image_path) == False:
+        #     print("ERROR: \"" + str(image_path) + "\" does not exists")
+        #     return
 
         # count files and folders in the directory
         image_name_suffix = len(os.listdir(image_path)) + 1
