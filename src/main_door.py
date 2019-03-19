@@ -22,8 +22,9 @@ print("=== import complete (main_door) ===\n")
 
 def authorize_guests():
     fr = FaceRecognizer("./z_face_testing/pictures_of_people_i_know/")
-    fr.train_on_folder_tree(True)
-    fr.save_to_file()
+    if not fr.load_from_file("./z_face_testing/trained_faces.pkl"):
+        fr.train_on_folder_tree(True)
+        fr.save_to_file("./z_face_testing/trained_faces.pkl")
 
     print("\nWaiting for a guest (press \"ENTER\" to take a photo of the guest and \"exit\" to stop)")
     while(True):
@@ -34,7 +35,7 @@ def authorize_guests():
 
         # do face recognition and return the results
         # here is have directly accessed the element at 0th index as each time only one photo is taken
-        results = fr.face_detection(images_path_tuple[0])
+        results = fr.face_detection(images_path_tuple[0], True, 0.2, 0.4)
         print(results)
 
 
