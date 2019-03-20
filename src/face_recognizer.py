@@ -125,10 +125,12 @@ class FaceRecognizer:
             if delete_image_without_faces:
                 os.remove(image_path)
                 print("WARNING: file deleted \"" + image_path + "\"")
+            return False
         else:
             # the following line will append all the items of "known_picture_encoded" to "pic_list_encoded"
             print("message: added new image file \"" + image_path + "\"")
             self.known_faces_encoded[index_to_insert][1].extend(known_picture_encoded)
+            return True
 
 
     def face_detection(self, picture_path, verify_all_faces = True, success_percentage = 0.6, distance_tolerance = 0.6):
