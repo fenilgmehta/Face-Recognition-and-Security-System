@@ -11,12 +11,12 @@ CLIENT_KNOWN_FACES_FOLDER = CLIENT_MAIN_DATA_FOLDER + "/" + "pictures_of_people_
 CLIENT_UNKNOWN_FACES_FOLDER = CLIENT_MAIN_DATA_FOLDER + "/" + "unknown_pictures"
 CLIENT_PATHS = (CLIENT_MAIN_DATA_FOLDER, CLIENT_KNOWN_FACES_FOLDER, CLIENT_UNKNOWN_FACES_FOLDER)
 
-def initialize_server():
+def initialize_server_paths():
     for i in SERVER_PATHS:
         if not os.path.exists(i):
             os.makedirs(i)
 
-def initialize_client():
+def initialize_client_paths():
     for i in CLIENT_PATHS:
         if not os.path.exists(i):
             os.makedirs(i)
