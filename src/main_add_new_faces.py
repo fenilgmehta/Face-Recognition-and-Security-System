@@ -15,7 +15,11 @@ try:
 except NameError:
     pass
 
+import path_initializer
+
 print("=== import complete (main_add_new_faces) ===\n")
+
+#####################################################################################################################
 
 
 def add_new_faces():
@@ -29,7 +33,7 @@ def add_new_faces():
         else: print("ERROR: please enter a valid choice")
 
         # capture image for training
-        Camera.capture_single_image("./z_face_testing/pictures_of_people_i_know/" + str(name))
+        custom_camera.capture_single_image(path_initializer.SERVER_KNOWN_FACES_FOLDER + "/" + str(name))
 
         print("\n--------------------------------------")
         print("Menu")
@@ -40,4 +44,6 @@ def add_new_faces():
 
 
 if __name__ == '__main__':
+    path_initializer.initialize_server_paths()
+    custom_camera = Camera()
     add_new_faces()
