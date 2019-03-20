@@ -1,22 +1,45 @@
-# python 2
+# python 2/3
+
+print("=== import started (client_RPi_face_detection) ===")
+
 from time import sleep
 import os
 
+try:
+    from cam_pi import Camera
+    is_raspberry_pi = True
+except ImportError:
+    from cam_laptop import Camera
+    is_raspberry_pi = False
+
+try:
+    input = raw_input
+except NameError:
+    pass
+
+import path_initializer
 import udp_transfer
-import cam_pi
 
-path = './face_testing/unknown_pictures/'
-camera_obj = cam_pi.Camera()
+print("=== import complete (client_RPi_face_detection) ===")
 
-print("### Press enter to take new photo, write 'exit' to stop.")
-ip_address = raw_input("Please enter the server IP address: ") #192.168.43.124
-port = raw_input("Please enter the server Port Number: ")
+#####################################################################################################################
+
+
+path_initializer.initialize_client_paths()
+camera_obj = Camera()
+
+print("\n")
+ip_address = input("Please enter the server IP address: ")
+port = input("Please enter the server Port Number: ")
 sender= udp_transfer.UdpTransfer(ip_address,port)
 
-msg = raw_input()
+print("\n\n### Press \"ENTER\" to take new photo, write \"exit\" to stop.")
+msg = input()
+
 while msg != "exit":
-    img_counter = camera_obj.capture(path)				#count files in directory
-    sender.send_data("face_detection",path+"image_{}.png".format(img_counter))
+    img_path = camera_obj.capture_single_image(path_initializer.CLIENT_UNKNOWN_FACES_FOLDER)[0]
+    sender.send_data("face_detection",img_path)
     response=sender.recieve_data()
     print("\n"+str(response))
-    msg = raw_input()
+    msg = input()
+
