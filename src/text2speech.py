@@ -1,29 +1,23 @@
-# Import the required module for text  
-# to speech conversion 
-from gtts import gTTS 
-  
-# This module is imported so that we can  
-# play the converted audio 
-import os 
+# python 3
+
+# https://stackoverflow.com/questions/48438686/realistic-text-to-speech-with-python-that-doesnt-require-internet
+# sudo apt-get update && sudo apt-get install espeak
+# pip install pyttsx3
+
+# offline text to speech
+import pyttsx3
+
+#####################################################################################################################
+
 
 def text_to_speech(user_text):
-	# str: the text that you want to convert to audio 
-		  
-	# Language in which you want to convert 
-	language = 'en'
-	  
-	# Passing the text and language to the engine,  
-	# here we have marked slow=False. Which tells  
-	# the module that the converted audio should  
-	# have a high speed 
-	myobj = gTTS(text=user_text, lang=language, slow=False) 
-	  
-	# Saving the converted audio in a mp3 file named 
-	# welcome  
-	myobj.save(".temp_audio.mp3") 
-	  
-	# Playing the converted file 
-	os.system("mpg321 .temp_audio.mp3")
+    try:
+        engine = pyttsx3.init()
+        engine.say(user_text)
+        engine.runAndWait()
+    except:
+        print("ERROR: unknown error in text to speech")
+
 
 if __name__ == "__main__":
     print(1)
