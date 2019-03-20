@@ -3,6 +3,8 @@ import face_recognition
 import os
 import numpy
 import pickle
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 print("=== import complete (face_recognizer) ===")
 
 def mydebug(msg):
