@@ -15,23 +15,26 @@ try:
 except NameError:
     pass
 
+import path_initializer
 from face_recognizer import FaceRecognizer
 
 print("=== import complete (main_door) ===\n")
 
+#####################################################################################################################
+
 
 def authorize_guests():
-    fr = FaceRecognizer("./z_face_testing/pictures_of_people_i_know/")
-    if not fr.load_from_file("./z_face_testing/trained_faces.pkl"):
+    fr = FaceRecognizer(path_initializer.SERVER_KNOWN_FACES_FOLDER)
+    if not fr.load_from_file(path_initializer.SERVER_MAIN_DATA_FOLDER + "/" + "trained_faces.pkl"):
         fr.train_on_folder_tree(True)
-        fr.save_to_file("./z_face_testing/trained_faces.pkl")
+        fr.save_to_file(path_initializer.SERVER_MAIN_DATA_FOLDER + "/" + "trained_faces.pkl")
 
     print("\nWaiting for a guest (press \"ENTER\" to take a photo of the guest and \"exit\" to stop)")
     while(True):
         if input()=="exit": return
 
         # capture image for training
-        images_path_tuple = Camera.capture_single_image("./z_face_testing/unknown_pictures/")
+        images_path_tuple = custom_camera.capture_single_image(path_initializer.SERVER_UNKNOWN_FACES_FOLDER)
 
         # do face recognition and return the results
         # here is have directly accessed the element at 0th index as each time only one photo is taken
@@ -40,4 +43,6 @@ def authorize_guests():
 
 
 if __name__ == '__main__':
+    path_initializer.initialize_server_paths()
+    custom_camera = Camera()
     authorize_guests()
