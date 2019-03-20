@@ -109,9 +109,12 @@ class FaceRecognizer:
 
     def train_on_image(self, person_name, image_path, delete_image_without_faces = False):
         index_to_insert = len(self.known_faces_encoded)
-        if self.known_faces_encoded.count(person_name) > 0:
-            index_to_insert = self.known_faces_encoded.index(person_name)
-        else:
+        for i in range(len(self.known_faces_encoded)):
+            if self.known_faces_encoded[i][0] == person_name:
+                index_to_insert = i
+                break
+
+        if index_to_insert == len(self.known_faces_encoded):
             self.known_faces_encoded.append((person_name, []))
 
         known_picture = face_recognition.load_image_file(image_path)
