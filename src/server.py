@@ -1,66 +1,131 @@
-# python 2 and 3
+# python 2/3
+
+print("=== import started (server) ===")
 
 from socket import *
 import sys
 import select
-from face_recognition_module import faceRecognition
-from text2speech import text_to_speech
-import netifaces as ni
+import netifaces
 
-message = "Image saved !"
+# from face_recognition_module import faceRecognition
+import path_initializer
+from face_recognizer import FaceRecognizer
+from text2speech import text_to_speech
+
+print("=== import complete (server) ===\n")
+
+#####################################################################################################################
+
 
 def get_wifi_ip():
     '''
-    Returns a tuple of (IPv4 and IPv6) WiFi address
+    Returns a tuple of (IPv4 and IPv6) for WiFi address
     '''
     for i in netifaces.interfaces():
         if i.startswith('wlp'):
             if netifaces.ifaddresses(i).__contains__(netifaces.AF_INET):
                 return (netifaces.ifaddresses(i)[netifaces.AF_INET][0]['addr'], netifaces.ifaddresses(i)[netifaces.AF_INET6][0]['addr'].split("%")[0])
+    return tuple()
 
 
-host = ni.ifaddresses('wlp2s0')[ni.AF_INET][0]['addr']
+ip_addresses = get_wifi_ip()
+if len(ip_addresses) == 0:
+    print("Unable to fetch the IP address. Hence running the server on localhost - 127.0.0.1")
+    ip_addresses = tuple(["127.0.0.1"])
+
+host = ip_addresses[0]
 port = 9999
+
+print("\n")
+print("host = " + str(host))
+print("port = " + str(port))
+
+path_initializer.initialize_server_paths()
+fr = FaceRecognizer(path_initializer.SERVER_KNOWN_FACES_FOLDER)
+loaded_dataset_path = path_initializer.SERVER_MAIN_DATA_FOLDER + "/" + "trained_faces.pkl"
+if not fr.load_from_file(loaded_dataset_path):
+    print("\n\nPlease wait while the server is getting initialized ...\n")
+    fr.train_on_folder_tree()
+    fr.save_to_file(loaded_dataset_path)
+
+print("\nPress \"ctrl+c\" to stop the server")
+
 while True:
-    print("\n\nServer is running ...\n")
+    print("\n")
+    print("=====================")
+    print("Server is running ...\n")
     s = socket(AF_INET,SOCK_DGRAM)
     s.bind((host,port))
 
     #addr = (host,port)
     buf=1024
 
-    data,addr = s.recvfrom(buf)
-    #print "Received File: "+data.strip()+"\nFrom: "+addr
+    try:
+        data, addr = s.recvfrom(buf)
+    except KeyboardInterrupt:
+        print("\nStopping the server ...")
+        s.close()
+        exit(0)
 
-    data = str(data)
-    mode = data[:data.rfind("@")][2:]
-    print(mode)
-    if mode == "face_training":                         # check the mode in which image is received and set path appropriatly
-        path = "./trained_faces/"   
+    try:
+        data = str(data.decode()).split("@")
+        # data = str(data.decode())
+    except:
+        print("ERROR: corrupted data received")
+        s.sendto("Network error, try again".encode(), addr)
+        continue
+
+    mode = data[0]
+    image_name = data[1]
+    print("mode : " + mode)
+    print("image_name : " + image_name)
+    if len(data) == 3:
+        person_name = data[2]
+        print("person_name : " + person_name)
+
+    # check the mode in which image is received and set image_path appropriatly
+    if mode == "face_training":
+        image_path = path_initializer.SERVER_KNOWN_FACES_FOLDER + "/" + person_name
     else:
-        path = "./unknown_faces/"   
+        image_path = path_initializer.SERVER_UNKNOWN_FACES_FOLDER
 
-    f = open(path+data[data.rfind('/')+1:],'wb')        # create a file in specified directory
+    image_save_path = image_path+"/"+image_name
+    f = open(image_save_path,'wb')        # create a file in specified directory
 
-    imgFile,addr = s.recvfrom(buf)                      # store file in buffer
+    # store file in buffer and write to file
+    imgFile,addr = s.recvfrom(buf)
     try:
         while(imgFile):
             f.write(imgFile)                            # write file
-            s.settimeout(2)
+            s.settimeout(1)
             imgFile,addr = s.recvfrom(buf)
     except timeout:
         f.close()
         print("File Downloaded")
+    except:
+        print("Unknown error")
+        mode = "error"
 
-    if mode == "face_training":
-        message = 'Image saved !'        
+    if mode == "error":
+        message = "Error downloading the image."
+        text_to_speech(message)
+    elif mode == "face_training":
+        if fr.train_on_image(str(person_name), str(image_save_path), True):
+            message = "Image saved !"        
+            fr.save_to_file(loaded_dataset_path)
+        else:
+            message = "No face found :("        
+        text_to_speech(message)
     else:
-        message = faceRecognition()    
-        #message = "Image saved !"
+        res = fr.face_detection(image_save_path, True, 0.2, 0.4)
+        print("result : " + str(res))
+        message = res[0][1]
+        for i in res:
+            if i[0]:
+                text_to_speech(i[1])
 
-    text_to_speech(message)
     s.sendto(message.encode(), addr)
     
     print(message)
-    message = ''
     s.close()
+
