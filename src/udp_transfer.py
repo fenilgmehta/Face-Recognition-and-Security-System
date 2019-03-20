@@ -13,10 +13,14 @@ class UdpTransfer:
         self.sock = socket(AF_INET,SOCK_DGRAM)
         self.buffer = in_buffer
         
-    def send_data(self,execution_mode,file_name):
+    def send_data(self, execution_mode, file_path, other_message = ""):
+        file_name = file_path[file_path.rfind("/")+1:]
         try:
-            self.sock.sendto(execution_mode+"@"+file_name,self.addr)
-            f=open(file_name,"rb")
+            if other_message == "":
+                self.sock.sendto((execution_mode+"@"+file_name).encode(),self.addr)
+            else:
+                self.sock.sendto((execution_mode+"@"+file_name+"@"+other_message).encode(),self.addr)
+            f=open(file_path,"rb")
             data = f.read(self.buffer)
             while (data):
                 #if(self.sock.sendto(data,self.addr)):
