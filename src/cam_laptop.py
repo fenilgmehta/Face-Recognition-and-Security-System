@@ -83,17 +83,19 @@ class Camera:
         return tuple(complete_image_paths)
 
 
-# Camera.capture_single_image = staticmethod(Camera.capture_single_image)
-# Camera.capture_multiple_image = staticmethod(Camera.capture_multiple_image)
+Camera.capture_single_image = staticmethod(Camera.capture_single_image)
+Camera.capture_multiple_image = staticmethod(Camera.capture_multiple_image)
 
+
+#####################################################################################################################
 
 if __name__ == "__main__":
-    custom_camera = Camera()
+    # custom_camera = Camera()
     
     print("Single capture start")
-    print(custom_camera.capture_single_image())
-    # print(Camera.capture_single_image())
+    print(Camera.capture_single_image())
+    # print(custom_camera.capture_single_image())
 
     print("Multiple capture start")
-    print(custom_camera.capture_multiple_image())
-    # print(Camera.capture_multiple_image())
+    print(Camera.capture_multiple_image())
+    # print(custom_camera.capture_multiple_image())
