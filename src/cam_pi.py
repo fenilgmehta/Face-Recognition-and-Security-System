@@ -24,24 +24,30 @@ class Camera:
 
 
         # count files and folders in the directory
-        image_name_suffix = len(os.listdir()) + 1
-        complete_image_paths = (image_path+"/"+pic_name_prefix+"{}.png".format(image_name_suffix))
+        image_name_suffix = len(os.listdir(image_path)) + 1
+        complete_image_paths = []
+        complete_image_paths.append(image_path+"/"+image_name_prefix+"{}.png".format(image_name_suffix))
+        complete_image_paths = tuple(complete_image_paths)
         
         # take access to PiCamera
         camera = PiCamera()
         # show PiCamera preview
         camera.start_preview()
-        # wait for pic_delay
-        sleep(pic_delay)
+        # wait for image_capture_delay
+        sleep(image_capture_delay)
         # take the photo and save it
         camera.capture(complete_image_paths[0])
         # close PiCamera
         camera.stop_preview()
+        camera.close()
 
         return complete_image_paths
 
 
 Camera.capture_single_image = staticmethod(Camera.capture_single_image)
+
+
+#####################################################################################################################
 
 if __name__ == "__main__":
     print("Single capture start")
