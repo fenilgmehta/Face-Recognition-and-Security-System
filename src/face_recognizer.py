@@ -31,7 +31,15 @@ class FaceRecognizer:
             self.path_to_training_data = ''
 
 
-    def train_on_folder_tree(self, delete_image_without_faces = False):
+    def get_person_index(self, person_name):
+        for i in range(len(self.known_faces_encoded)):
+            if self.known_faces_encoded[i][0] == person_name:
+                return i
+        self.known_faces_encoded.append(tuple([person_name, []]))
+        return len(self.known_faces_encoded)
+
+
+    def train_on_folder_tree(self, delete_image_without_faces = True):
         '''
         The directory structure should be like this:
             path_to_training_data/name1/name1_1.png
@@ -58,18 +66,18 @@ class FaceRecognizer:
             self.known_faces_encoded.append(res)
 
 
-    def retrain_on_folder(self, person_name, delete_image_without_faces = False):
+    def retrain_on_folder(self, person_name, delete_image_without_faces = True):
         # person_name = folder_path[folder_path.rfind("/")+1:]
         folder_path = self.path_to_training_data + "/" + person_name
-        if self.known_faces_encoded.count(person_name) > 0:
-            index_to_remove = self.known_faces_encoded.index(person_name)
-            self.known_faces_encoded.pop(index_to_remove)
+
+        index_to_remove = self.get_person_index(person_name)
+        self.known_faces_encoded.pop(index_to_remove)
 
         res = self.__train_on_folder(folder_path, delete_image_without_faces)
         if len(res[1]) != 0: self.known_faces_encoded.append(res)
 
 
-    def __train_on_folder(self, folder_path, delete_image_without_faces = False):
+    def __train_on_folder(self, folder_path, delete_image_without_faces = True):
         '''
         This function will return a tuple of (person name, list of encoded faces)
         If the "folder_path" does not exists, then we return no name and empty list
@@ -93,6 +101,7 @@ class FaceRecognizer:
             file_path = folder_path + "/" + pic_list[i]
             # mydebug("loading image: "+ str(file_path))
             known_picture = face_recognition.load_image_file(file_path)
+            # convert to 128 floating point representation
             known_picture_encoded = face_recognition.face_encodings(known_picture)
             if len(known_picture_encoded) == 0:
                 # no face found
@@ -107,15 +116,8 @@ class FaceRecognizer:
         return (person_name, pic_list_encoded)
 
 
-    def train_on_image(self, person_name, image_path, delete_image_without_faces = False):
-        index_to_insert = len(self.known_faces_encoded)
-        for i in range(len(self.known_faces_encoded)):
-            if self.known_faces_encoded[i][0] == person_name:
-                index_to_insert = i
-                break
-
-        if index_to_insert == len(self.known_faces_encoded):
-            self.known_faces_encoded.append((person_name, []))
+    def train_on_image(self, person_name, image_path, delete_image_without_faces = True):
+        index_to_insert = self.get_person_index(person_name)
 
         known_picture = face_recognition.load_image_file(image_path)
         known_picture_encoded = face_recognition.face_encodings(known_picture)
@@ -131,6 +133,16 @@ class FaceRecognizer:
             print("message: added new image file \"" + image_path + "\"")
             self.known_faces_encoded[index_to_insert][1].extend(known_picture_encoded)
             return True
+
+
+    def remove_person(self, person_name, delete_all_images = False):
+        """
+        Used to remove a person from the known faces list
+        """
+        index_to_remove = self.get_person_index(person_name)
+        self.known_faces_encoded.pop(index_to_remove)
+        if delete_all_images:
+            os.system("rm -r " + self.path_to_training_data + "/" + str(person_name))
 
 
     def face_detection(self, picture_path, verify_all_faces = True, success_percentage = 0.6, distance_tolerance = 0.6):
@@ -158,7 +170,7 @@ class FaceRecognizer:
                 # results: list of boolean values
                 results = face_recognition.compare_faces(i[1], j, distance_tolerance)
                 results = numpy.array(results)
-                if results.sum() > (len(i) * success_percentage):
+                if results.sum() > (len(i[1]) * success_percentage):
                     # (bool is_a_known_face, String name, Float success_fraction, int pictures_matched, int total_pictures)
                     # print(True, i[0], results.sum() / len(i[1]), results.sum(), len(i[1]))
                     if verify_all_faces:
@@ -216,3 +228,11 @@ if __name__ == "__main__":
     print("=== Face detection complete ===")
 
     # print(a.face_detection('./z_face_testing/unknown_pictures/unknown.jpg', True, 0.6, 0.5))
+
+# DESCRIPTION: program to reload a particular part of the data-set
+# f = FaceRecognizer("./z_face_testing/pictures_of_people_i_know")
+# if not a.load_from_file("./z_face_testing/trained_faces.pkl"):
+#     a.train_on_folder_tree()
+#     a.save_to_file()
+# f.retrain_on_folder("person_name")
+# f.save_to_file("./z_face_testing/trained_faces.pkl")
