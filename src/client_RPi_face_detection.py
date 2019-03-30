@@ -26,7 +26,6 @@ print("=== import complete (client_RPi_face_detection) ===")
 
 
 path_initializer.initialize_client_paths()
-camera_obj = Camera()
 
 print("\n")
 ip_address = input("Please enter the server IP address: ")
@@ -37,7 +36,7 @@ print("\n\n### Press \"ENTER\" to take new photo, write \"exit\" to stop.")
 msg = input()
 
 while msg != "exit":
-    img_path = camera_obj.capture_single_image(path_initializer.CLIENT_UNKNOWN_FACES_FOLDER)[0]
+    img_path = Camera.capture_single_image(path_initializer.CLIENT_UNKNOWN_FACES_FOLDER)[0]
     sender.send_data("face_detection",img_path)
     response=sender.recieve_data()
     print("\n"+str(response))
