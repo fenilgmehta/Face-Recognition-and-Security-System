@@ -4,6 +4,7 @@ print("=== import started (server) ===")
 
 from socket import *
 import sys
+import os
 import select
 import netifaces
 
@@ -67,12 +68,21 @@ while True:
         s.close()
         exit(0)
 
+    corrupted_data_error = False
     try:
         data = str(data.decode()).split("@")
         # data = str(data.decode())
     except:
         print("ERROR: corrupted data received")
-        s.sendto("Network error, try again".encode(), addr)
+        corrupted_data_error = True
+        # the following lines will receive all the data sent and then send the reply
+        try:
+            imgFile,addr = s.recvfrom(buf)
+            while(imgFile):
+                s.settimeout(1)
+                imgFile,addr = s.recvfrom(buf)
+        except timeout:
+            s.sendto("Network error, try again".encode(), addr)
         continue
 
     mode = data[0]
@@ -89,7 +99,10 @@ while True:
     else:
         image_path = path_initializer.SERVER_UNKNOWN_FACES_FOLDER
 
+    if not os.path.exists(image_path): os.makedirs(image_path) # create the directory with the new persons name if it does not exist
     image_save_path = image_path+"/"+image_name
+    image_save_path = image_save_path[:image_save_path.rfind(".")] + "_" + str(len(os.listdir(image_path))) + ".png"
+    print("image_save_path : " + str(image_save_path))
     f = open(image_save_path,'wb')        # create a file in specified directory
 
     # store file in buffer and write to file
@@ -117,13 +130,18 @@ while True:
             message = "No face found :("        
         text_to_speech(message)
     else:
-        res = fr.face_detection(image_save_path, True, 0.2, 0.4)
-        print("result : " + str(res))
-        message = res[0][1]
-        for i in res:
-            if i[0]:
-                text_to_speech(i[1])
-
+        try:
+            res = fr.face_detection(image_save_path, True, 0.2, 0.4)
+            print("result : " + str(res))
+            message = res[0][1]
+            for i in res:
+                if i[0]:
+                    text_to_speech("Welcome " + str(i[1]))
+            if len(res) == 1 and res[0][0] == False:
+                text_to_speech(message)
+        except:
+            print("Error, image corrupted")
+    
     s.sendto(message.encode(), addr)
     
     print(message)
