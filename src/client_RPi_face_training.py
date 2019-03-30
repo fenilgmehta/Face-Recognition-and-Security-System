@@ -26,7 +26,6 @@ print("=== import complete (client_RPi_face_training) ===")
 
 
 path_initializer.initialize_client_paths()
-camera_obj = Camera()
 
 print("\n")
 ip_address = input("Please enter the server IP address: ")
@@ -38,7 +37,7 @@ name = input("\n\nWhat's your name: ")
 msg=""
 
 while msg != "exit":
-    img_path = camera_obj.capture_single_image(path_initializer.CLIENT_KNOWN_FACES_FOLDER, name+'_')[0]
+    img_path = Camera.capture_single_image(path_initializer.CLIENT_KNOWN_FACES_FOLDER, name+'_')[0]
     sender.send_data("face_training", img_path, name)
     response=sender.recieve_data()
     print(response)
