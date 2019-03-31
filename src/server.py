@@ -87,8 +87,6 @@ while True:
 
     mode = data[0]
     image_name = data[1]
-    print("mode : " + mode)
-    print("image_name : " + image_name)
     if len(data) == 3:
         person_name = data[2]
         print("person_name : " + person_name)
@@ -100,10 +98,16 @@ while True:
         image_path = path_initializer.SERVER_UNKNOWN_FACES_FOLDER
 
     if not os.path.exists(image_path): os.makedirs(image_path) # create the directory with the new persons name if it does not exist
+
     image_save_path = image_path+"/"+image_name
     image_save_path = image_save_path[:image_save_path.rfind(".")] + "_" + str(len(os.listdir(image_path))) + ".png"
+    print("mode : " + mode)
+    print("image_name : " + image_name)
+    print("image_path : " + image_path)
     print("image_save_path : " + str(image_save_path))
-    f = open(image_save_path,'wb')        # create a file in specified directory
+
+    # create a file in specified directory
+    f = open(image_save_path,'wb')
 
     # store file in buffer and write to file
     imgFile,addr = s.recvfrom(buf)
@@ -132,15 +136,16 @@ while True:
     else:
         try:
             res = fr.face_detection(image_save_path, True, 0.2, 0.4)
-            print("result : " + str(res))
             message = res[0][1]
+            print("result : " + str(res))
             for i in res:
-                if i[0]:
-                    text_to_speech("Welcome " + str(i[1]))
+                if i[0]: text_to_speech("Welcome " + str(i[1]))
             if len(res) == 1 and res[0][0] == False:
                 text_to_speech(message)
         except:
-            print("Error, image corrupted")
+            message = "Error, image corrupted"
+            text_to_speech(message)
+            print(message)
     
     s.sendto(message.encode(), addr)
     
