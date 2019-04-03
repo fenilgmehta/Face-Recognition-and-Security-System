@@ -1,4 +1,5 @@
 # python 3
+# Description: method to do offline text to speech using pyttsx3 library
 
 # https://stackoverflow.com/questions/48438686/realistic-text-to-speech-with-python-that-doesnt-require-internet
 # sudo apt-get update && sudo apt-get install espeak
@@ -11,6 +12,11 @@ import pyttsx3
 
 
 def text_to_speech(user_text):
+    """
+    Parameters:
+    user_text (str): string message to be converted to audio and output using speakers available
+    """
+
     try:
         engine = pyttsx3.init()
         engine.say(user_text)
