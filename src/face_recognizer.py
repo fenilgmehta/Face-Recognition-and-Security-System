@@ -1,8 +1,13 @@
+# python 3
+# Description: class to handle face training and recognition requests from the server
+
 print("=== import started (face_recognizer) ===")
 import face_recognition
 import os
 import numpy
 import pickle
+
+# the following two lines are used to solve truncated file problem
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 print("=== import complete (face_recognizer) ===")
@@ -11,17 +16,19 @@ def mydebug(msg):
     print("DEBUG: "+str(msg))
 
 class FaceRecognizer:
-    '''
+    """
         self.is_valid               : bool tells whether the object is valid or not, whether it will work as required or not
         self.path_to_training_data  : will store the directory path where the training pictures are stored
         self.known_faces_encoded    : this is a list of tuple (name, list of encoded faces)
-    '''
+    """
 
 
     def __init__(self, path_to_training_data):
-        '''
-        self.path_to_training_data will store the directory path where the training pictures are stored
-        '''
+        """
+        Parameters:
+        path_to_training_data (str): will store the directory path where the training pictures are stored
+        """
+
         path_to_training_data = os.path.abspath(path_to_training_data)
         if os.path.exists(path_to_training_data) and os.path.isdir(path_to_training_data):
             self.is_valid = True
@@ -32,6 +39,14 @@ class FaceRecognizer:
 
 
     def get_person_index(self, person_name):
+        """
+        Parameters:
+        person_name (str): name of the person whose tuple index is to be returned
+
+        Returns:
+        int: index to the tuple with person_name in self.known_faces_encoded
+        """
+
         for i in range(len(self.known_faces_encoded)):
             if self.known_faces_encoded[i][0] == person_name:
                 return i
@@ -40,7 +55,7 @@ class FaceRecognizer:
 
 
     def train_on_folder_tree(self, delete_image_without_faces = True):
-        '''
+        """
         The directory structure should be like this:
             path_to_training_data/name1/name1_1.png
                                     .../name1_2.png
@@ -53,7 +68,10 @@ class FaceRecognizer:
                                     .../name3_3.png
         Due to this, we can compare unknown face with multiple pictures of the same person.
         Example: face with beard, without beard, with makeup, without makeup, with hair cut, without hair cut, and many more cases
-        '''
+
+        Parameters:
+        delete_image_without_faces : boolean value to decide whether to delete the image if no face is found
+        """
 
         folder_path = self.path_to_training_data
         if not os.path.exists(folder_path): return
@@ -67,6 +85,14 @@ class FaceRecognizer:
 
 
     def retrain_on_folder(self, person_name, delete_image_without_faces = True):
+        """
+        Retrain the object on a particular person_name
+
+        Parameters:
+        person_name (str): name of the person to which the image should be added
+        delete_image_without_faces (bool): boolean value to decide whether to delete the image if no face is found
+        """
+
         # person_name = folder_path[folder_path.rfind("/")+1:]
         folder_path = self.path_to_training_data + "/" + person_name
 
@@ -78,11 +104,19 @@ class FaceRecognizer:
 
 
     def __train_on_folder(self, folder_path, delete_image_without_faces = True):
-        '''
+        """
         This function will return a tuple of (person name, list of encoded faces)
         If the "folder_path" does not exists, then we return no name and empty list
         person_name: it will be same as the name of the folder being scanned for images
-        '''
+
+        Parameters:
+        folder_path (str): path to the folder which contains multiple images of a person on which the object should be trained
+        delete_image_without_faces (bool): boolean value to decide whether to delete the image if no face is found
+
+        Returns:
+        tuple: (person name, [multiple encoded faces])
+        """
+
         folder_path = os.path.abspath(folder_path)
         folder_path_exists = os.path.isdir(folder_path)
         pic_list = []
@@ -117,6 +151,18 @@ class FaceRecognizer:
 
 
     def train_on_image(self, person_name, image_path, delete_image_without_faces = True):
+        """
+        Train the object on a single image
+
+        Parameters:
+        person_name (str): name of the person to which the image should be added
+        image_path  (str): path to the image
+        delete_image_without_faces (bool): boolean value to decide whether to delete the image if no face is found
+
+        Returns:
+        bool: status denoting if the image was added to self.known_faces_encoded or not.
+        """
+
         index_to_insert = self.get_person_index(person_name)
 
         known_picture = face_recognition.load_image_file(image_path)
@@ -138,7 +184,12 @@ class FaceRecognizer:
     def remove_person(self, person_name, delete_all_images = False):
         """
         Used to remove a person from the known faces list
+
+        Parameters:
+        person_name       (str): name of the person who is to be removed from the known faces list
+        delete_all_images (bool): boolean value to decide whether to delete the folder of person_name or not
         """
+
         index_to_remove = self.get_person_index(person_name)
         self.known_faces_encoded.pop(index_to_remove)
         if delete_all_images:
@@ -146,13 +197,17 @@ class FaceRecognizer:
 
 
     def face_detection(self, picture_path, verify_all_faces = True, success_percentage = 0.6, distance_tolerance = 0.6):
-        '''
-        picture_path        : Path to the image to test for authentication
-        verify_all_faces    : Decide whether to return the first matched result of all matched faces
-        success_percentage  : Percentage of images to match to consider the face as known
-        distance_tolerance  : How much distance between faces to consider it a match. Lower is more strict. 0.6 is typical best performance.
-        returns a list of tuple (bool is_a_known_face, String name, Float success_fraction, int pictures_matched, int total_pictures)
-        '''
+        """
+        Parameters:
+        picture_path        (str): Path to the image to test for authentication
+        verify_all_faces    (bool): Decide whether to return the first matched result of all matched faces
+        success_percentage  (float): Percentage of images to match to consider the face as known
+        distance_tolerance  (float): How much distance between faces to consider it a match. Lower is more strict. 0.6 is typical best performance.
+
+        Returns:
+        list: a list of tuple (bool is_a_known_face, String name, Float success_fraction, int pictures_matched, int total_pictures)
+        """
+
         if success_percentage > 1: success_percentage = 1
         if (not os.path.exists(picture_path)) or (not os.path.isfile(picture_path)):
             return [(False, 'file does not exists')]
@@ -185,23 +240,55 @@ class FaceRecognizer:
 
 
     def single_face_detection(self, picture_path, success_percentage = 0.6, distance_tolerance = 0.6):
+        """
+        If the image has a face, then the first known face would be returned.
+        If no known face found, then [(False, "Unauthorized")] is returned
+        If no face found, then [(False, "No face found")] is returned
+
+        Parameters:
+        picture_path        (str): Path to the image to test for authentication
+        success_percentage  (float): Percentage of images to match to consider the face as known
+        distance_tolerance  (float): How much distance between faces to consider it a match. Lower is more strict. 0.6 is typical best performance.
+
+        Returns:
+        list: list of a single tuple (bool is_a_known_face, String name, Float success_fraction,
+                                            int pictures_matched, int total_pictures)
+        """
+        
         return self.face_detection(picture_path, False, success_percentage, distance_tolerance)
 
 
-    def save_to_file(self, file_name = "trained_faces.pkl"):
+    def save_to_file(self, file_path = "trained_faces.pkl"):
+        """
+        Save a pickle file at "file_path"
+
+        Parameters:
+        file_path (str): path to the file where the class is to be saved
+        """
+
         # open the file for writing
-        file_object = open(file_name,'wb') 
-        # this writes the object to the file named stored in the variable file_name
+        file_object = open(file_path,'wb') 
+        # this writes the object to the file named stored in the variable file_path
         pickle.dump((self.is_valid, self.path_to_training_data, self.known_faces_encoded), file_object)
         # here we close the file object
         file_object.close()
 
 
-    def load_from_file(self, saved_file_name = "trained_faces.pkl"):
+    def load_from_file(self, file_path = "trained_faces.pkl"):
+        """
+        Load the pickle file located at "file_path"
+
+        Parameters:
+        file_path (str): path to the file where the class is to be saved
+
+        Returns:
+        bool: denoting the status of the file loading
+        """
+
         # Check if file exists and it contains data or not. If file not found or file is empty, then return False. Else read the content and load the object
-        if os.path.isfile("./" + saved_file_name) and os.path.getsize(saved_file_name) != 0:
+        if os.path.isfile("./" + file_path) and os.path.getsize(file_path) != 0:
             # open the file in read mode
-            file_object = open(saved_file_name, 'rb')  
+            file_object = open(file_path, 'rb')  
             # load the object from the file into class data members
             (self.is_valid, self.path_to_training_data, self.known_faces_encoded) = pickle.load(file_object)  
             return True
@@ -209,7 +296,6 @@ class FaceRecognizer:
 
 
 if __name__ == "__main__":
-    # from face_recognition_module_new import *
     a = FaceRecognizer('./z_face_testing/pictures_of_people_i_know')
 
     print("\n=== Training started ===")
