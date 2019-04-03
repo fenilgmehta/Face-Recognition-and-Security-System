@@ -1,4 +1,6 @@
 # python 2/3
+# Description: common file for client and server so that the paths used are unambiguous
+
 import os
 
 SERVER_MAIN_DATA_FOLDER = "./z_face_testing"
@@ -13,11 +15,17 @@ CLIENT_UNKNOWN_FACES_FOLDER = CLIENT_MAIN_DATA_FOLDER + "/" + "unknown_pictures"
 CLIENT_PATHS = (CLIENT_MAIN_DATA_FOLDER, CLIENT_KNOWN_FACES_FOLDER, CLIENT_UNKNOWN_FACES_FOLDER)
 
 def initialize_server_paths():
+    """
+    Initialize directories for the server
+    """
     for i in SERVER_PATHS:
         if not os.path.exists(i):
             os.makedirs(i)
 
 def initialize_client_paths():
+    """
+    Initialize directories for the client
+    """
     for i in CLIENT_PATHS:
         if not os.path.exists(i):
             os.makedirs(i)
