@@ -1,4 +1,6 @@
-# python 2
+# python 3
+# Description: camera class with static methods to access camera interface on Raspberry Pi
+
 from picamera import PiCamera
 import os
 from time import sleep

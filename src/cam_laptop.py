@@ -1,5 +1,5 @@
-# python 2/3
-# Description: python module to for Camera interface
+# python 3
+# Description: camera class with static methods to access camera interface on Laptop
 
 import cv2
 import os
