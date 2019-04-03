@@ -11,6 +11,7 @@ Using client server model:
 2. "client_RPi_face_training.py" should be used on the client to add known/authorized people to the dataset
 3. "client_RPi_face_detection.py" to be used for face detection on the client side
 
+Note: use python 3 for the program execution to avoid any difficuly and errors
 
 -----------------------
 ### How to run:
