@@ -1,4 +1,5 @@
-# python 2/3
+# python 3
+# Description: client module for face training
 
 print("=== import started (client_RPi_face_detection) ===")
 
