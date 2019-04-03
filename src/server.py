@@ -1,4 +1,5 @@
-# python 2/3
+# python 3
+# Description: server program to accept and respond to client requests
 
 print("=== import started (server) ===")
 
@@ -8,7 +9,6 @@ import os
 import select
 import netifaces
 
-# from face_recognition_module import faceRecognition
 import path_initializer
 from face_recognizer import FaceRecognizer
 from text2speech import text_to_speech
@@ -20,7 +20,10 @@ print("=== import complete (server) ===\n")
 
 def get_wifi_ip():
     '''
-    Returns a tuple of (IPv4 and IPv6) for WiFi address
+    WiFi interface IPv4 and IPv6 addresses if available, else empty tuple
+
+    Returns:
+    tuple: tuple of (IPv4 and IPv6) for WiFi address
     '''
     for i in netifaces.interfaces():
         if i.startswith('wlp'):
